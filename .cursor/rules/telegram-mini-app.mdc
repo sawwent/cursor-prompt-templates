@@ -1,0 +1,509 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Telegram Mini App - Cursor Rules
+
+## Project Overview
+This is a Telegram mini app built with React, TypeScript, SCSS modules, and Zustand for state management.
+
+## Tech Stack
+**STICK TO THIS TECH STACK** unless explicitly asked to use something else:
+- **React** - UI library
+- **TypeScript** - Type safety (strict mode, no any types)
+- **SCSS Modules** - Styling (with SCSS variables, not CSS custom properties)
+- **Zustand** - State management
+- **Radix UI** - Headless UI components
+- **Storybook** - Component development and documentation
+- **Biome** - Code formatting and linting
+- **Vitest** - Testing framework
+- **Vite** - Build tool (primary, NOT Webpack)
+
+## CRITICAL: TASK ADHERENCE RULES
+**THESE RULES OVERRIDE EVERYTHING ELSE:**
+
+1. **DO EXACTLY WHAT IS ASKED, NOTHING MORE**
+   - If the user asks to change button color to red, ONLY change the button color to red
+   - Do NOT add hover effects, focus states, accessibility improvements, or ANY other changes
+   - Do NOT fix other "issues" you notice in the code
+   - Do NOT suggest better approaches or optimizations
+
+2. **NO SIDE IMPROVEMENTS OR "FIXES"**
+   - Do NOT add accessibility features unless explicitly asked
+   - Do NOT add hover/focus states unless explicitly asked  
+   - Do NOT fix linting errors in other files unless asked
+   - Do NOT reorganize code structure unless asked
+   - Do NOT add error handling unless asked
+   - Do NOT optimize performance unless asked
+
+3. **MINIMAL SCOPE CHANGES ONLY**
+   - If asked to fix a button, ONLY touch that button
+   - If asked to add a component, ONLY add that component with requested features
+   - Do NOT refactor surrounding code
+   - Do NOT change naming conventions unless asked
+   - Do NOT move files unless asked
+
+4. **ASK BEFORE ADDING ANYTHING EXTRA**
+   - If you think something needs to be added for the requested change to work, ASK FIRST
+   - If there's a linting error after your change, ask if they want it fixed
+   - If there's a missing dependency, ask how to handle it
+
+5. **FOLLOW USER SPECIFICATIONS EXACTLY**
+   - If user specifies a variant name that doesn't exist, use it anyway (they may have added it)
+   - If user wants static text instead of dynamic title, do exactly that
+   - If user wants a specific size that seems "wrong", use that size
+   - If user wants to remove something that seems important, remove it
+   - Do NOT "correct" the user's specifications based on your assumptions
+
+## Core Principles
+- **DO ONLY WHAT IS ASKED** - No additional features, suggestions, or "improvements" unless explicitly requested
+- **ASK FOR CLARIFICATION** - If anything is unclear, always ask before proceeding
+- **NO ASSUMPTIONS** - Follow the exact specifications provided
+- **MOBILE-FIRST** - Design for mobile/Telegram WebView constraints first
+
+## File Structure & Organization
+
+### Component Structure
+```
+src/components/ComponentName/
+├── ComponentName.tsx
+├── ComponentName.module.scss
+└── ComponentName.stories.tsx
+```
+
+### Project Structure
+```
+src/
+├── components/        # React components
+│   └── ui/           # UI kit components
+├── pages/            # Page components
+├── types/            # TypeScript type definitions
+├── hooks/            # Custom React hooks
+├── utils/            # Utility functions (see Utils section)
+├── assets/           # SVGs (imported as React components) and images
+├── constants/        # App constants
+├── store/            # Zustand state management
+└── scss/             # Global styles, mixins, variables
+    ├── globals.scss
+    ├── _mixins.scss
+    └── _vars.scss
+```
+
+### Utils Structure
+```
+src/utils/utilName/
+├── utilName.ts
+└── utilName.test.ts
+```
+
+### Pages Structure
+```
+src/pages/PageName/
+├── index.ts          # Export the page component
+├── PageName.tsx      # Page component (e.g., HomePage, HistoryPage)
+├── PageName.module.scss
+└── PageName.stories.tsx
+```
+
+## Code Style & Patterns
+
+### Components
+- **ALWAYS** use named exports, **NEVER** default exports
+- **ALWAYS** use React.FC<PropsInterface> pattern
+- **NO** component.displayName assignments
+- **ALWAYS** define interface for props above component
+- **ALWAYS** destructure props in function signature
+- **USE React.PropsWithChildren** for components that only accept children: `interface Props extends React.PropsWithChildren {}`
+- Use meaningful prop names that describe their purpose
+- Add JSDoc comments for complex props or components
+
+```typescript
+// For components with only children
+interface LayoutProps extends React.PropsWithChildren {}
+
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  return (
+    <div className={styles.container}>
+      {children}
+    </div>
+  );
+};
+
+// For components with additional props
+interface ComponentNameProps {
+  /** Brief description of what this prop does */
+  title: string;
+  /** Optional prop with default behavior description */
+  isActive?: boolean;
+  /** Callback function description */
+  onAction: () => void;
+  /** Children content */
+  children?: React.ReactNode;
+}
+
+export const ComponentName: React.FC<ComponentNameProps> = ({ 
+  title, 
+  isActive = false, 
+  onAction,
+  children 
+}) => {
+  // component logic
+  return (
+    <div className={styles.container}>
+      <h1>{title}</h1>
+      {children}
+    </div>
+  );
+};
+```
+
+### Imports
+- **ABSOLUTE IMPORTS ONLY** - Use `$/` prefix instead of relative paths
+- Examples: `$/components/`, `$/utils/`, `$/types/`
+- **NO** `../../../` relative imports
+- Group imports: React first, then libraries, then internal imports
+- Always import SCSS modules as `styles`
+
+```typescript
+import React from 'react';
+import { SomeLibrary } from 'some-library';
+
+import { ComponentName } from '$/components/ComponentName/ComponentName';
+import { useCustomHook } from '$/hooks/useCustomHook';
+import type { CustomType } from '$/types/customType';
+
+import styles from './ComponentName.module.scss';
+```
+
+### TypeScript
+- **ALWAYS** use `interface` over `type` for object shapes
+- Use `type` only for unions, primitives, or computed types
+- Strict TypeScript practices - no `any`, prefer unknown
+- Proper type definitions for all props, functions, and variables
+- Use generic types when appropriate
+- Export interfaces that might be used by other components
+
+```typescript
+// ✅ Good
+interface UserData {
+  id: string;
+  name: string;
+  email?: string;
+}
+
+type Status = 'loading' | 'success' | 'error';
+
+// ❌ Bad
+type UserData = {
+  id: string;
+  name: string;
+}
+```
+
+### CSS/SCSS
+- **SCSS Modules** for component styles
+- **SCSS Variables** (with `$`) not CSS custom properties (avoid `--var`)
+- **camelCase** naming convention for CSS classes
+- **Variables and mixins are automatically imported** - no need for manual imports in component SCSS files
+- Global styles in `src/scss/`
+- Use BEM-like naming within components
+- Prefer semantic class names over utility classes
+
+```scss
+// No imports needed - variables and mixins are automatically available
+.container {
+  background-color: $color-white;
+  border-radius: $radius-default;
+  
+  &.isActive {
+    background-color: $color-primary;
+    color: $color-white;
+  }
+}
+
+.title {
+  font-family: $font-family-default;
+}
+
+.button {
+  @include buttonReset; // Mixins are automatically available
+  
+  &:hover {
+    background-color: $color-gray-light;
+  }
+}
+```
+
+### Unit Strategy (Telegram Mobile-First)
+- **rem** for typography, spacing, component dimensions, touch targets (1rem = 10px)
+- **px** for borders, border-radius, shadows, and other precise details
+- **%** for responsive widths and flexible containers
+- **Avoid** vw/vh (unpredictable in Telegram WebView) and em (cascading issues)
+
+### State Management
+- **Zustand** for global state management
+- Store files in `src/store/`
+- Use React's built-in state (useState, useReducer) for local component state
+- React Query will be added later for API handling
+- Keep stores focused and split by domain
+
+```typescript
+// store/userStore.ts
+import { create } from 'zustand';
+
+interface UserState {
+  user: User | null;
+  isLoading: boolean;
+  setUser: (user: User) => void;
+  clearUser: () => void;
+}
+
+export const useUserStore = create<UserState>((set) => ({
+  user: null,
+  isLoading: false,
+  setUser: (user) => set({ user }),
+  clearUser: () => set({ user: null }),
+}));
+```
+
+## Styling Guidelines
+
+### SCSS Variables Usage
+- **Variables are automatically available** - no imports needed thanks to Vite configuration
+- Use semantic variable names from `_vars.scss`
+
+### Component Styling Best Practices
+- Mobile-first responsive design
+- Consistent spacing using spacing variables
+- Use Flexbox for layouts, CSS Grid when appropriate
+- Avoid fixed heights, prefer min-height
+- Use semantic color variables, not hardcoded colors
+
+## Tooling & Scripts
+
+### Formatting & Linting
+- **Biome** for code formatting and linting (NOT ESLint/Prettier)
+- Run before committing: `npm run lint:fix`
+- Required npm scripts:
+  - `lint:check` - Check linting issues
+  - `lint:fix` - Fix linting issues automatically
+- Fix linting errors immediately, don't accumulate them
+- Follow existing code style (check current files for conventions)
+- Use consistent indentation/spacing per project standard
+
+### Package Management & Build
+- **npm** for package management (NOT yarn/pnpm unless specified)
+- **Vite** for development and bundling (primary build tool)
+- Only add libraries that are necessary and project-compatible
+- Ensure proper versioning in package.json
+- Maintain compatibility with existing build configuration
+- Do NOT modify config files unless explicitly requested
+
+### Testing
+- **Vitest** for testing
+- Required npm scripts for testing
+- Each util must have corresponding test file
+- Test user interactions, edge cases, and error states
+- Use Testing Library for React component tests
+
+### Storybook
+- **Storybook** for component development and documentation
+- **ALWAYS** create ComponentName.stories.tsx for each UI component
+- Include all component variants, sizes, and states in stories
+- Use proper story structure with Meta and StoryObj types
+- Include accessibility testing and interactive controls
+- Document component behavior and usage
+
+```typescript
+import type { Meta, StoryObj } from '@storybook/react';
+import { ComponentName } from './ComponentName';
+
+const meta: Meta<typeof ComponentName> = {
+  title: 'UI/ComponentName',
+  component: ComponentName,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    // Define controls for props
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    // Default props
+  },
+};
+
+export const Variants: Story = {
+  args: {
+    // Different variants
+  },
+};
+```
+
+## File Naming Conventions
+
+### File Names
+- **Components**: `ComponentName.tsx` + `ComponentName.module.scss` + `ComponentName.stories.tsx` + `index.ts`
+- **Pages**: `PageName.tsx` + `PageName.module.scss` + `PageName.stories.tsx` + `index.ts`
+- **Utils**: `utilName.ts` + `utilName.test.ts`
+- **Hooks**: `useHookName.ts` + `useHookName.test.ts`
+- **Types**: `typeName.ts` (lowercase)
+- **Stores**: `entityStore.ts`
+- **Constants**: `constantName.ts` (camelCase)
+- **Assets**: `kebab-case.svg` for icons, descriptive names for images
+
+### Code Conventions
+- **CSS classes**: camelCase (`.primaryButton`, `.isActive`)
+- **Component names**: PascalCase (`HomePage`, `UserProfile`)
+- **Interfaces**: PascalCase (`UserData`, `ApiResponse`)
+- **Functions/variables**: camelCase (`fetchUserData`, `isLoading`)
+- **Constants**: UPPER_SNAKE_CASE for top-level constants
+- **Story files**: Must end with `.stories.tsx` for Storybook detection
+
+### File Organization Rules
+- **Single responsibility**: Each file has one clear purpose
+- **No mixed concerns**: Keep UI separate from logic/config
+- **Descriptive names**: Use clear, self-explanatory names
+- **No spaces/special chars** in filenames
+- **Maintain exact file/folder names** as specified in tasks
+
+## Error Handling & Validation
+- Always handle loading and error states in components
+- Use proper TypeScript types instead of any
+- Validate props with TypeScript interfaces
+- Handle edge cases (empty states, network errors, etc.)
+- Use meaningful error messages
+- Consider accessibility in error states
+
+## Performance Best Practices
+- Use React.memo() for expensive components
+- Implement proper dependency arrays in useEffect/useMemo/useCallback
+- Avoid creating objects/functions in render
+- Use keys properly in lists
+- Lazy load components when appropriate
+- Optimize images and assets
+
+## SVG Assets
+- **IMPORT SVGs as React components** - Use Vite's `?react` suffix to import SVGs
+- **DO NOT** create inline SVG JSX components
+- **DO NOT** copy SVG code into React components
+- SVG files should remain as `.svg` files in the `src/assets/icons/` directory
+- Import syntax: `import IconName from '$/assets/icons/icon-name.svg?react';`
+
+## What NOT to Do
+**ABSOLUTELY FORBIDDEN UNLESS EXPLICITLY REQUESTED:**
+- No default exports
+- No relative imports (../)
+- No component.displayName
+- No additional features unless requested
+- No suggestions or improvements unless asked
+- No README or documentation files unless requested
+- No unnecessary comments unless asked
+- No UI components without corresponding Storybook stories
+- No CSS custom properties (--var), use SCSS variables ($var)
+- No hardcoded colors or spacing values
+- No console.log in production code
+- No any types in TypeScript
+- No unused imports or variables
+- No inline SVG JSX components - always import SVG files as React components
+
+**EXTRA FORBIDDEN ACTIONS:**
+- Do NOT add hover/focus/active states unless asked
+- Do NOT add accessibility attributes (aria-*, role, tabIndex) unless asked
+- Do NOT add @include button-reset or other mixins unless asked
+- Do NOT change existing text content unless asked
+- Do NOT add CSS transitions or animations unless asked
+- Do NOT add error boundaries or error handling unless asked
+- Do NOT add loading states unless asked
+- Do NOT change prop interfaces unless the change requires it
+- Do NOT add JSDoc comments unless asked
+- Do NOT add validation unless asked
+
+## Telegram Mini App Specific
+- No specific Telegram SDK integration yet
+- Will be added when requested
+
+### API Integration
+- Follow official Telegram Mini App best practices
+- Respect theme settings and user preferences
+- Handle app closing, data sending to bot, theme adaptations
+- **DO NOT** use unsupported or unofficial APIs
+
+### Constraints & Considerations  
+- **Mobile-first design** for Telegram WebView
+- **Touch-friendly targets** (minimum 44px/4.4rem)
+- **Network considerations** (optimize for mobile connections)
+- **Memory constraints** (avoid large bundles)
+
+### Security & Privacy
+- **Do NOT expose sensitive data** in frontend
+- **Validate and sanitize** all user inputs
+- **Respect user privacy** (don't log/misuse Telegram data)
+- **Follow Telegram's security guidelines**
+
+## Project-Specific Patterns
+
+### Component Organization
+- **Games components**: Use inline sub-components when simpler (like GameItem in GamesList)
+- **UI components**: Always include comprehensive Storybook stories
+- **Page components**: Include index.ts exports and proper routing structure
+
+### Data Management  
+- **Mock data**: Store in `src/constants/` with proper TypeScript interfaces
+- **Asset references**: Use real placeholder services (picsum.photos) not generic placeholders
+- **State management**: Keep component state local unless explicitly needs global Zustand store
+
+### Styling Patterns
+- **Image sizing**: Use rem for component dimensions, px for borders/radius
+- **Button patterns**: Support variant systems (primary, secondary, etc.)
+- **Responsive design**: Mobile-first approach with Telegram WebView constraints
+- **Color usage**: Always use SCSS variables, never hardcoded colors
+
+### Import Patterns
+- **Icons**: Import as React components with `?react` suffix
+- **Constants**: Import both types and data (`import { type Game, mockGames }`)
+- **Components**: Use absolute imports with `$/` prefix
+- **Styles**: Always import as `styles` object
+
+## Future Considerations
+- React Query for API handling (will be added later)
+- Telegram Web App SDK integration (when needed)
+- Enhanced state management patterns as app grows
+- Performance optimization for larger component trees
+
+## Development Workflow
+
+### Implementation Steps
+1. **Read user request carefully** - understand exact requirements
+2. **Create proper file structure** - follow naming conventions  
+3. **Implement TypeScript interfaces first** - define types before logic
+4. **Build component with SCSS modules** - use project variables
+5. **Create Storybook stories** for UI components
+6. **Write unit tests** for complex logic (if requested)
+7. **Run linting** with `npm run lint:fix`
+8. **Test functionality** locally and in Storybook
+
+### Code Output Format
+- **Multi-file responses**: Output each file separately with clear file paths
+- **Syntax highlighting**: Use proper language tags (```tsx, ```scss, ```ts)
+- **File paths**: Use exact paths as specified or follow project structure
+- **No extra content**: Only provide requested code, no explanations unless asked
+- **Complete context**: Ensure all necessary imports and dependencies
+
+### Quality Checks
+- Code would run immediately without modification
+- All imports are correct and dependencies available
+- Follows project's existing patterns and conventions
+- Passes Biome linting requirements
+- Integrates with existing build configuration
+
+---
+
+These rules ensure consistent, high-quality code that integrates seamlessly with the existing Telegram Mini App architecture while maintaining strict adherence to requested specifications. 
