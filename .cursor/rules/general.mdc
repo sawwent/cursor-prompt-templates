@@ -22,8 +22,8 @@ alwaysApply: true
 ### Two-Level Rule System
 This project uses a hierarchical rule system:
 
-1. **General Rules (this file)**: High-level development philosophy, mindset, and strategic guidance
-2. **Project-Specific Rules**: Concrete coding standards, architectural constraints, naming conventions
+1.  **General Rules (this file)**: High-level development philosophy, mindset, and strategic guidance
+2.  **Project-Specific Rules**: Concrete coding standards, architectural constraints, naming conventions
 
 ### Rule Adherence
 - Always follow project-specific `.cursor/rules/*.mdc` rules strictly when generating, editing, or refactoring code
@@ -36,7 +36,7 @@ This project uses a hierarchical rule system:
 ### Task Execution
 - Read instructions carefully and follow them to the letter
 - Implement exactly what is requested - no more, no less
-- If user's request could be interpreted multiple ways, choose the safest, most straightforward interpretation
+- If a request is ambiguous, **ask for clarification**. Don't guess. If you can't get an answer, then fall back to the safest, most straightforward interpretation.
 - Don't infer requirements that are not stated
 - Under no circumstances introduce features or content that user didn't request
 
@@ -69,10 +69,35 @@ This project uses a hierarchical rule system:
 - Consider mobile/WebView constraints where applicable
 
 ### Security & Privacy
+- **NEVER commit secrets, API keys, or credentials.** Use environment variables or a dedicated secrets management service.
 - Never expose sensitive data in frontend
 - Validate and sanitize user inputs
 - Respect user privacy in data handling
 - Follow platform-specific security guidelines
+
+### Error Handling & Logging
+- **Predictable Failures**: Don't suppress errors silently. Fail fast and loudly for unexpected errors. For expected failures (e.g., invalid user input), provide clear feedback.
+- **Structured Logging**: Log errors with a consistent structure (e.g., JSON) including a timestamp, error level, message, and relevant context (like a trace ID).
+- **Log Levels**: Use appropriate log levels (e.g., `ERROR`, `WARN`, `INFO`, `DEBUG`). Keep production logs clean by default (INFO and above).
+- **No Sensitive Data in Logs**: Ensure logs do not contain sensitive user information like passwords, API keys, or personal data.
+
+### Version Control
+- Follow conventional commit standards for commit messages (e.g., `feat:`, `fix:`, `docs:`).
+- Create feature branches from the main development branch (e.g., `main` or `develop`).
+- Keep pull requests small and focused on a single issue.
+- Ensure all tests pass before requesting a review or merging.
+
+### Dependency Management
+- Before adding a new dependency, verify it is well-maintained, secure, and aligns with the project's license.
+- Use a lockfile (`package-lock.json`, `yarn.lock`) to ensure deterministic installs.
+- Avoid adding dependencies for trivial tasks that can be solved with a few lines of code.
+- Regularly review and update dependencies to patch security vulnerabilities.
+
+### Code Documentation
+- Comment on the *why*, not the *what*. Assume the reader understands the language, but not the business logic or design decisions.
+- Add JSDoc comments for complex functions, especially public APIs, to clarify their purpose, parameters, and return values.
+- Keep comments up-to-date with code changes. Delete stale or misleading comments.
+- Avoid commented-out code. If it's not used, remove it. Version control has the history.
 
 ## Anti-Patterns to Avoid
 
@@ -107,7 +132,7 @@ This project uses a hierarchical rule system:
 
 ### File Operations
 - Prefer editing existing files over creating new ones
-- Use search_replace for large files (>2500 lines), edit_file for smaller ones
+- Use `edit_file` for all file modifications. Be precise with edits in large files to ensure accuracy.
 - Always clean up temporary files created during iteration
 - Follow project's file naming conventions exactly
 
