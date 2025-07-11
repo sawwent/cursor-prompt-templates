@@ -1,0 +1,83 @@
+---
+description: Provides strict rules for all SCSS development. Enforces SCSS Modules, a nested BEM naming convention, and clarifies usage of auto-imported variables and mixins.
+alwaysApply: false
+---
+# SCSS Style Guide
+
+This document outlines the SCSS styling conventions for the project. Adherence to these rules ensures consistency, maintainability, and prevents style conflicts.
+
+## 1. SCSS Modules
+
+All component-specific styles must be encapsulated within SCSS Modules. Each component must have a corresponding `.module.scss` file (e.g., `ComponentName.module.scss`). This approach scopes class names locally to the component, preventing global scope pollution and style collisions.
+
+Import modules as follows:
+```typescript
+import styles from './ComponentName.module.scss';
+```
+
+Usage in JSX: `<div className={styles.myCoolComponent}>`.
+
+## 2. Class Naming Convention
+
+A nested, BEM-like methodology must be used for naming CSS classes. The root class of a component should be `camelCase` and preferably match the component's name. Descendant elements are nested using the `&` operator, which improves readability and maintains a clear structure within the SCSS file.
+
+**Example:**
+```scss
+// ComponentName.module.scss
+
+.componentName {
+  display: flex;
+  flex-direction: column;
+  padding: 1.6rem;
+  background-color: $color-background;
+
+  // Descendant Elements
+  &Title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: $color-text-primary;
+  }
+
+  &Wrapper {
+    margin-top: 1.6rem;
+    display: grid;
+    gap: 1.2rem;
+  }
+  
+  // Modifier for state
+  &.isActive {
+    border: 1px solid $color-primary;
+  }
+}
+```
+
+This convention enhances code organization by co-locating related styles and clearly representing the component's DOM structure within the stylesheet. The resulting class names used in JSX will be, for example, `styles.componentName` and `styles.componentNameTitle`.
+
+## 3. Global Variables and Mixins
+
+Due to the project's Vite configuration, SCSS variables and mixins are globally available across all `.module.scss` files. Manual imports are unnecessary and must not be added.
+
+- **Variables**: All variables defined in `src/scss/_vars.scss` can be used directly.
+- **Mixins**: All mixins defined in `src/scss/_mixins.scss` can be used directly with `@include`.
+
+**Example:**
+```scss
+.button {
+  @include buttonReset;
+  background-color: $color-primary;
+  border-radius: $radius-default;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+}
+```
+Do not use `@import` to include the global `_vars.scss` or `_mixins.scss` files within component stylesheets.
+
+## 4. General Styling Rules
+
+- **Class Names**: Must be `camelCase` (e.g., `primaryButton`, `modalWrapper`).
+- **Units**: Use `rem` for typography, spacing, and component dimensions. Use `px` for fine details like borders and shadows. Use `%` for fluid container widths where appropriate.
+- **Selectors**: Do not use ID selectors (`#`) for styling. Use class selectors exclusively. IDs should be reserved for JavaScript hooks or accessibility purposes.
+- **Specificity**: Avoid using `!important`. Its use often indicates an underlying specificity issue that should be resolved by refactoring the selectors.
+- **Semantic Naming**: Class names must be semantic. Name them based on their function or purpose (e.g., `.errorMessage`, `.submitButton`), not their appearance (e.g., `.largeRedText`, `.pullRight`).
