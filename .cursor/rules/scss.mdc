@@ -1,5 +1,7 @@
 ---
 description: Provides strict rules for all SCSS development. Enforces SCSS Modules, a nested BEM naming convention, and clarifies usage of auto-imported variables and mixins.
+globs: 
+  - "src/**/*.scss"
 alwaysApply: false
 ---
 # SCSS Style Guide
